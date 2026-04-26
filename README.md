@@ -1,4 +1,5 @@
 ## GRUPO AD
+TRABAJO FINAL INTEGRADOR - PROGRAMACIÓN lll 
 
 - Diego Benjamin Vallory
 - Franco Matías Aquino
@@ -9,7 +10,6 @@
 
 # TP JavaScript
 
-Trabajo práctico que usa la API de Game of Thrones para hacer consultas y manipular archivos JSON.
 
 ## Para correr el proyecto
 
