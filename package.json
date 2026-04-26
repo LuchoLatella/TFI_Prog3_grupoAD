@@ -2,22 +2,13 @@
   "name": "tfi_prog3_grupoad",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/app.js",
   "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LuchoLatella/TFI_Prog3_grupoAD.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/LuchoLatella/TFI_Prog3_grupoAD/issues"
-  },
-  "homepage": "https://github.com/LuchoLatella/TFI_Prog3_grupoAD#readme",
+  "type": "module",
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -29,3 +20,4 @@
     "nodemon": "^3.1.14"
   }
 }
+
