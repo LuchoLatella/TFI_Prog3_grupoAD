@@ -34,3 +34,7 @@ app.get("/test-db", async (req, res) => {
     res.status(500).json({ error: error.message }); // Devuelve el error en caso de falla
   }
 })
+
+// importando las rutas de especialidades y usándolas en la aplicación
+import especialidadesRoutes from "./routes/especialidades.routes.js";
+app.use("/especialidades", especialidadesRoutes);
