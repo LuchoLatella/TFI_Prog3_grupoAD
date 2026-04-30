@@ -21,3 +21,16 @@ const PORT = process.env.PORT || 3000;              //definimos el puerto en el 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
 });
+
+// probando la BBDD MySQL, importando el pool de conexiones desde el archivo db.js y realizando una consulta para verificar la conexión
+
+import { pool } from "./config/db.js";
+
+app.get("/test-db", async (req, res) => {
+  try {
+    const [rows] = await pool.query("SELECT 1 + 1 AS result");
+    res.json({ ok: true, rows }); // Devuelve el resultado de la consulta
+  } catch (error) {
+    res.status(500).json({ error: error.message }); // Devuelve el error en caso de falla
+  }
+})
