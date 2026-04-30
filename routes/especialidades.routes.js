@@ -8,7 +8,7 @@ import {
 
 const router = Router();
 
-router.get("/especialidades", getEspecialidades);
-router.post("/especialidades", createEspecialidad);
+router.get("/", getEspecialidades);
+router.post("/", createEspecialidad);
 
 export default router;
