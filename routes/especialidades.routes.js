@@ -1,6 +1,6 @@
 // iniciando CRUD
 
-import Router from "express";
+import { Router } from "express";
 import {
     getEspecialidades,
     createEspecialidad,
