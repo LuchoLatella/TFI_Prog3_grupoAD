@@ -2,6 +2,7 @@
 
 import { Router } from "express";
 import { body, param } from "express-validator";
+import { validarCampos } from "../middlewares/validate.js";
 
 import {
   getEspecialidades,
