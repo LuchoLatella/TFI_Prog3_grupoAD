@@ -17,15 +17,34 @@ const router = Router();
 router.get("/", getEspecialidades);
 
 // GET por ID
-router.get("/:id", getEspecialidadById);
+router.get(
+  "/:id",
+  param("id").isInt().withMessage("El ID debe ser numérico"),
+  getEspecialidadById
+);
 
 // POST crear
-router.post("/", createEspecialidad);
+router.post(
+  "/",
+  body("nombre")
+    .notEmpty().withMessage("El nombre es obligatorio")
+    .isLength({ min: 3 }).withMessage("Mínimo 3 caracteres"),
+  createEspecialidad
+);
 
 // PUT editar
-router.put("/:id", updateEspecialidad);
+router.put(
+  "/:id",
+  param("id").isInt(),
+  body("nombre").notEmpty(),
+  updateEspecialidad
+);
 
 // DELETE lógico
-router.delete("/:id", deleteEspecialidad);
+router.delete(
+  "/:id",
+  param("id").isInt(),
+  deleteEspecialidad
+);
 
 export default router;
