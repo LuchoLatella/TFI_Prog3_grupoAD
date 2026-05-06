@@ -74,3 +74,23 @@ export const createEspecialidad = async (req, res) => {
   }
 };
 
+export const updateEspecialidad = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre } = req.body;
+
+    const [result] = await pool.query(
+      "UPDATE especialidades SET nombre = ? WHERE id_especialidad = ? AND activo = 1",
+      [nombre, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Especialidad no encontrada" });
+    }
+                                                                                    // PUT PARA ACTUALIZAR EL NOMBRE DE UNA ESPECIALIDAD EXISTENTE, SOLO SI ESTÁ ACTIVA
+    res.json({ message: "Especialidad actualizada" });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
