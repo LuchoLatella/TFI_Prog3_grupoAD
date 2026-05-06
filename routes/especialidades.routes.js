@@ -2,9 +2,12 @@
 
 import { Router } from "express";
 import {
-    getEspecialidades,
-    createEspecialidad,
-} from "../controllers/especialidades.controller.js";
+  getEspecialidades,
+  getEspecialidadById,
+  createEspecialidad,
+  updateEspecialidad,
+  deleteEspecialidad
+} from "../controllers/especialidades.controller.js";  //agregando el controlador
 
 const router = Router();
 
