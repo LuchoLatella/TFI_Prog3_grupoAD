@@ -27,8 +27,9 @@ export const getEspecialidades = async (req, res) => {
     res.json(rows);                                          // GET DE TODAS LAS ESPECIALIDADES ACTIVAS
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  console.log("ERROR REAL:", error);   // 👈 importante
+  res.status(500).json({ error: error.message || "Error interno" });
+}
 };
 
 export const getEspecialidadById = async (req, res) => {
