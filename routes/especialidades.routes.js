@@ -1,6 +1,8 @@
 // iniciando CRUD
 
 import { Router } from "express";
+import { body, param } from "express-validator";
+
 import {
   getEspecialidades,
   getEspecialidadById,
