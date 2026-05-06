@@ -94,3 +94,23 @@ export const updateEspecialidad = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const deleteEspecialidad = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await pool.query(
+      "UPDATE especialidades SET activo = 0 WHERE id_especialidad = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Especialidad no encontrada" });
+    }
+
+    res.json({ message: "Especialidad eliminada (soft delete)" });                 // DELETE LÓGICO PARA MARCAR UNA ESPECIALIDAD COMO INACTIVA EN LUGAR DE ELIMINARLA FÍSICAMENTE
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
