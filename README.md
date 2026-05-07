@@ -1,12 +1,9 @@
 ## GRUPO AD
 TRABAJO FINAL INTEGRADOR - PROGRAMACIÓN III
 
-- Diego Benjamin Vallory
-- Franco Matías Aquino
-- Lucas Samuel Beltran
-- Gaston Emmanuel Diaz
-- Mateo Fernandez
-- Luciano Latella
+Trabajo Final Integrador – Tecnicatura en Desarrollo Web
+Materia: **Programación III**
+Año: 2026
 
 ---
 
@@ -42,6 +39,82 @@ PORT=3000
 ```bash
 npm run dev
 ```
+npm run dev
+```
+
+---
+
+## 🚀 Endpoints disponibles
+
+### 🔹 Especialidades
+
+| Método | Endpoint            | Descripción                      |
+| ------ | ------------------- | -------------------------------- |
+| GET    | /especialidades     | Obtener todas las especialidades |
+| GET    | /especialidades/:id | Obtener una especialidad         |
+| POST   | /especialidades     | Crear nueva especialidad         |
+| PUT    | /especialidades/:id | Modificar especialidad           |
+| DELETE | /especialidades/:id | Eliminación lógica               |
+
+---
+
+## 🧪 Ejemplos de uso
+
+### Crear especialidad
+
+```
+POST /especialidades
+```
+
+Body:
+
+```json
+{
+  "nombre": "CARDIOLOGÍA"
+}
+```
+
+---
+
+### Obtener especialidades
+
+```
+GET /especialidades
+```
+
+---
+
+## 🧠 Reglas de negocio implementadas
+
+* Eliminación lógica mediante campo `activo`
+* Validación de datos de entrada
+* Manejo de errores con respuestas HTTP adecuadas
+
+---
+
+## 🔐 Seguridad (en desarrollo)
+
+* Autenticación mediante JWT
+* Autorización basada en roles:
+
+  * Médico
+  * Paciente
+  * Administrador
+
+---
+
+## 📊 Estado del proyecto
+
+* [x] Conexión a base de datos
+* [x] CRUD de especialidades
+* [ ] Autenticación JWT
+* [ ] Gestión de turnos
+* [ ] Documentación Swagger
+* [ ] Generación de reportes PDF
+
+---
+
+## 👥 Integrantes
 
 La API queda disponible en `http://localhost:3000`
 
