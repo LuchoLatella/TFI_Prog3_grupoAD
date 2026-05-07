@@ -1,4 +1,5 @@
-# 🏥 API Clínica - Programación III
+## GRUPO AD
+TRABAJO FINAL INTEGRADOR - PROGRAMACIÓN III
 
 Trabajo Final Integrador – Tecnicatura en Desarrollo Web
 Materia: **Programación III**
@@ -6,90 +7,37 @@ Año: 2026
 
 ---
 
-## 📌 Descripción
+## Requisitos
 
-Este proyecto consiste en el desarrollo de una **API RESTful** para la gestión de una clínica médica.
+- Node.js
+- XAMPP (MySQL corriendo)
 
-La aplicación permite administrar:
+## Pasos para levantar el proyecto
 
-* Especialidades médicas
-* Médicos
-* Pacientes
-* Obras sociales
-* Turnos
-
-Se implementa utilizando **Node.js**, **Express** y **MySQL**, aplicando buenas prácticas de desarrollo backend.
-
----
-
-## 🎯 Objetivos del proyecto
-
-* Implementar una API REST desde el lado del servidor
-* Conectar con base de datos relacional (MySQL)
-* Aplicar reglas de negocio reales
-* Gestionar autenticación y autorización por roles
-* Documentar endpoints correctamente
-
----
-
-## 🛠️ Tecnologías utilizadas
-
-* Node.js
-* Express
-* MySQL (phpMyAdmin)
-* express-validator
-* JSON Web Tokens (JWT) *(en desarrollo)*
-* dotenv
-* cors
-
----
-
-## 📁 Estructura del proyecto
-
-```
-src/
- ├── config/          # Configuración de base de datos
- ├── controllers/     # Lógica de negocio
- ├── routes/          # Definición de endpoints
- ├── middlewares/     # Validaciones y otros middlewares
- └── app.js           # Punto de entrada
-```
-
----
-
-## ⚙️ Instalación y ejecución
-
-### 1. Clonar repositorio
-
-```
-git clone https://github.com/LuchoLatella/TFI_Prog3_grupoAD.git
-cd TFI_Prog3_grupoAD
-```
-
-### 2. Instalar dependencias
-
-```
+**1. Instalar dependencias**
+```bash
 npm install
 ```
 
-### 3. Configurar variables de entorno
+**2. Configurar la base de datos**
 
-Crear archivo `.env` en la raíz:
+- Abrir phpMyAdmin
+- Importar el archivo `modeloDatos.php`
+- Luego ejecutar el contenido de `stored_procedures.sql`
 
+**3. Crear el archivo `.env` en la raíz del proyecto**
 ```
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=
 DB_NAME=prog3_turnos
-
+JWT_SECRET=grupoad
 PORT=3000
-JWT_SECRET=secreto123
 ```
 
-### 4. Ejecutar el servidor
-
-Modo desarrollo:
-
+**4. Iniciar el servidor**
+```bash
+npm run dev
 ```
 npm run dev
 ```
@@ -168,12 +116,10 @@ GET /especialidades
 
 ## 👥 Integrantes
 
-* Diego Benjamin Vallory
-* Franco Matías Aquino
-* Lucas Samuel Beltran
-* Gaston Emmanuel Diaz
-* Mateo Fernandez
-* Luciano Latella
+La API queda disponible en `http://localhost:3000`
 
+La documentación Swagger está en `http://localhost:3000/api-docs`
 
+Hacer login con las credenciales de: admin@clinica.com yy admin123.
 
+Pegar el token del login en Authorize y luego ejecutar cualquier ruta.
