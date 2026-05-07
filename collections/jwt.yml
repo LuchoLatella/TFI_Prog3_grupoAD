@@ -1,0 +1,15 @@
+info:
+  name: jwt
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: http://localhost:3000/auth/login
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
