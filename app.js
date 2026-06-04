@@ -48,12 +48,12 @@ const swaggerSpec = swaggerJsdoc({
 
 app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/auth', authRoutes);
-app.use('/especialidades', especialidadesRoutes);
-app.use('/obras-sociales', obrasSocialesRoutes);
-app.use('/medicos', medicosRoutes);
-app.use('/pacientes', pacientesRoutes);
-app.use('/turnos', turnosRoutes);
+app.use('/api/v1/auth',          authRoutes);
+app.use('/api/v1/especialidades', especialidadesRoutes);
+app.use('/api/v1/obras-sociales', obrasSocialesRoutes);
+app.use('/api/v1/medicos',        medicosRoutes);
+app.use('/api/v1/pacientes',      pacientesRoutes);
+app.use('/api/v1/turnos',         turnosRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
