@@ -21,7 +21,9 @@ import turnosRoutes from './routes/turnos.routes.js';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
@@ -44,7 +46,7 @@ const swaggerSpec = swaggerJsdoc({
     apis: ['./routes/*.js']
 });
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/auth', authRoutes);
 app.use('/especialidades', especialidadesRoutes);
