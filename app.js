@@ -55,5 +55,13 @@ app.use('/api/v1/medicos',        medicosRoutes);
 app.use('/api/v1/pacientes',      pacientesRoutes);
 app.use('/api/v1/turnos',         turnosRoutes);
 
+app.use((req, res) => {
+  res.status(404).json({ mensaje: 'Ruta no encontrada' });
+});
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({ mensaje: err.message });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
