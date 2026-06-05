@@ -21,7 +21,9 @@ import turnosRoutes from './routes/turnos.routes.js';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
@@ -44,14 +46,22 @@ const swaggerSpec = swaggerJsdoc({
     apis: ['./routes/*.js']
 });
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/auth', authRoutes);
-app.use('/especialidades', especialidadesRoutes);
-app.use('/obras-sociales', obrasSocialesRoutes);
-app.use('/medicos', medicosRoutes);
-app.use('/pacientes', pacientesRoutes);
-app.use('/turnos', turnosRoutes);
+app.use('/api/v1/auth',          authRoutes);
+app.use('/api/v1/especialidades', especialidadesRoutes);
+app.use('/api/v1/obras-sociales', obrasSocialesRoutes);
+app.use('/api/v1/medicos',        medicosRoutes);
+app.use('/api/v1/pacientes',      pacientesRoutes);
+app.use('/api/v1/turnos',         turnosRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({ mensaje: 'Ruta no encontrada' });
+});
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({ mensaje: err.message });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));

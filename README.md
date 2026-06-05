@@ -5,6 +5,15 @@ Trabajo Final Integrador – Tecnicatura en Desarrollo Web
 Materia: **Programación III**
 Año: 2026
 
+## 👥 Integrantes
+
+* Diego Benjamin Vallory
+* Franco Matías Aquino
+* Lucas Samuel Beltran
+* Gaston Emmanuel Diaz
+* Mateo Fernandez
+* Luciano Latella
+
 ---
 
 ## Requisitos
@@ -113,8 +122,6 @@ GET /especialidades
 * [ ] Generación de reportes PDF
 
 ---
-
-## 👥 Integrantes
 
 La API queda disponible en `http://localhost:3000`
 
