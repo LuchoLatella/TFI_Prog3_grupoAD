@@ -3,12 +3,12 @@ import { body, validationResult } from 'express-validator';
 import { verificarToken } from '../middlewares/auth.js';
 import { autorizar } from '../middlewares/roles.js';
 import {
-    getEspecialidades,
-    getEspecialidadById,
-    createEspecialidad,
-    updateEspecialidad,
-    deleteEspecialidad
-} from '../controllers/especialidades.controller.js';
+    getObrasSociales,
+    getObraSocialById,
+    createObraSocial,
+    updateObraSocial,
+    deleteObraSocial
+} from '../controllers/obras_sociales.controller.js';
 
 const validate = (req, res, next) => {
     const errors = validationResult(req);
@@ -20,24 +20,24 @@ const router = Router();
 
 /**
  * @swagger
- * /especialidades:
+ * /obras-sociales:
  *   get:
- *     summary: Listar especialidades
- *     tags: [Especialidades]
+ *     summary: Listar obras sociales
+ *     tags: [Obras Sociales]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de especialidades
+ *         description: Lista de obras sociales
  */
-router.get('/', verificarToken, autorizar(2, 3), getEspecialidades);
+router.get('/', verificarToken, autorizar(3), getObrasSociales);
 
 /**
  * @swagger
- * /especialidades/{id}:
+ * /obras-sociales/{id}:
  *   get:
- *     summary: Obtener especialidad por ID
- *     tags: [Especialidades]
+ *     summary: Obtener obra social por ID
+ *     tags: [Obras Sociales]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -48,18 +48,16 @@ router.get('/', verificarToken, autorizar(2, 3), getEspecialidades);
  *           type: integer
  *     responses:
  *       200:
- *         description: Especialidad
- *       404:
- *         description: No encontrada
+ *         description: Obra social
  */
-router.get('/:id', verificarToken, autorizar(2, 3), getEspecialidadById);
+router.get('/:id', verificarToken, autorizar(3), getObraSocialById);
 
 /**
  * @swagger
- * /especialidades:
+ * /obras-sociales:
  *   post:
- *     summary: Crear especialidad
- *     tags: [Especialidades]
+ *     summary: Crear obra social
+ *     tags: [Obras Sociales]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -71,18 +69,29 @@ router.get('/:id', verificarToken, autorizar(2, 3), getEspecialidadById);
  *             properties:
  *               nombre:
  *                 type: string
+ *               descripcion:
+ *                 type: string
+ *               porcentaje_descuento:
+ *                 type: number
+ *               es_particular:
+ *                 type: integer
  *     responses:
  *       201:
  *         description: Creada
  */
-router.post('/', verificarToken, autorizar(3), body('nombre').notEmpty(), validate, createEspecialidad);
+router.post('/', verificarToken, autorizar(3),
+    body('nombre').notEmpty(),
+    body('porcentaje_descuento').isNumeric(),
+    validate,
+    createObraSocial
+);
 
 /**
  * @swagger
- * /especialidades/{id}:
+ * /obras-sociales/{id}:
  *   put:
- *     summary: Editar especialidad
- *     tags: [Especialidades]
+ *     summary: Editar obra social
+ *     tags: [Obras Sociales]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -91,27 +100,23 @@ router.post('/', verificarToken, autorizar(3), body('nombre').notEmpty(), valida
  *         required: true
  *         schema:
  *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               nombre:
- *                 type: string
  *     responses:
  *       200:
  *         description: Actualizada
  */
-router.put('/:id', verificarToken, autorizar(3), body('nombre').notEmpty(), validate, updateEspecialidad);
+router.put('/:id', verificarToken, autorizar(3),
+    body('nombre').notEmpty(),
+    body('porcentaje_descuento').isNumeric(),
+    validate,
+    updateObraSocial
+);
 
 /**
  * @swagger
- * /especialidades/{id}:
+ * /obras-sociales/{id}:
  *   delete:
- *     summary: Eliminar especialidad (soft delete)
- *     tags: [Especialidades]
+ *     summary: Eliminar obra social (soft delete)
+ *     tags: [Obras Sociales]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -124,6 +129,6 @@ router.put('/:id', verificarToken, autorizar(3), body('nombre').notEmpty(), vali
  *       200:
  *         description: Eliminada
  */
-router.delete('/:id', verificarToken, autorizar(3), deleteEspecialidad);
+router.delete('/:id', verificarToken, autorizar(3), deleteObraSocial);
 
 export default router;
