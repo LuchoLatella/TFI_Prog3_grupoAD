@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { validarCampos } from '../middlewares/validate.js';
-import { verifyToken, checkRole } from '../middlewares/auth.middleware.js';
+import { verifyToken, checkRole } from '../middlewares/auth.js';
 import {
     getTurnos,
     crearTurno,
