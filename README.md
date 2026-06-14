@@ -125,7 +125,7 @@ GET /especialidades
 
 La API queda disponible en `http://localhost:3000`
 
-La documentación Swagger está en `http://localhost:3000/api-docs`
+La documentación Swagger está en `http://localhost:3000/api/v1/api-docs`
 
 Hacer login con las credenciales de: admin@clinica.com yy admin123.
 
