@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { body, validationResult } from 'express-validator';
-import { verificarToken } from '../middlewares/auth.js';
-import { autorizar } from '../middlewares/roles.js';
+import { body, param, query } from 'express-validator';
+import { validarCampos } from '../middlewares/validate.js';
+import { verifyToken, checkRole } from '../middlewares/auth.middleware.js';
 import {
     getMedicos,
     getMedicoById,
@@ -9,19 +9,20 @@ import {
     desasociarObraSocial
 } from '../controllers/medicos.controller.js';
 
-const validate = (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errores: errors.array() });
-    next();
-};
-
 const router = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Médicos
+ *   description: Gestión de médicos y sus obras sociales
+ */
 
 /**
  * @swagger
  * /medicos:
  *   get:
- *     summary: Listar médicos (opcionalmente filtrar por especialidad)
+ *     summary: Listar todos los médicos (con filtro opcional por especialidad)
  *     tags: [Médicos]
  *     security:
  *       - bearerAuth: []
@@ -30,18 +31,25 @@ const router = Router();
  *         name: especialidad
  *         schema:
  *           type: integer
- *         description: ID de especialidad para filtrar
+ *         description: Filtrar por id_especialidad
  *     responses:
  *       200:
  *         description: Lista de médicos
  */
-router.get('/', verificarToken, autorizar(2, 3), getMedicos);
+router.get(
+    '/',
+    verifyToken,
+    checkRole([2, 3]), // pacientes y admins pueden listar médicos
+    query('especialidad').optional().isInt({ min: 1 }).withMessage('ID especialidad inválido'),
+    validarCampos,
+    getMedicos
+);
 
 /**
  * @swagger
  * /medicos/{id}:
  *   get:
- *     summary: Obtener médico por ID
+ *     summary: Obtener un médico por ID
  *     tags: [Médicos]
  *     security:
  *       - bearerAuth: []
@@ -53,15 +61,24 @@ router.get('/', verificarToken, autorizar(2, 3), getMedicos);
  *           type: integer
  *     responses:
  *       200:
- *         description: Médico
+ *         description: Datos del médico
+ *       404:
+ *         description: Médico no encontrado
  */
-router.get('/:id', verificarToken, autorizar(2, 3), getMedicoById);
+router.get(
+    '/:id',
+    verifyToken,
+    checkRole([2, 3]),
+    param('id').isInt({ min: 1 }).withMessage('El ID debe ser un entero positivo'),
+    validarCampos,
+    getMedicoById
+);
 
 /**
  * @swagger
  * /medicos/{id}/obras-sociales:
  *   post:
- *     summary: Asociar obra social a médico
+ *     summary: Asociar un médico con una obra social (solo admin)
  *     tags: [Médicos]
  *     security:
  *       - bearerAuth: []
@@ -77,16 +94,23 @@ router.get('/:id', verificarToken, autorizar(2, 3), getMedicoById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required: [id_obra_social]
  *             properties:
  *               id_obra_social:
  *                 type: integer
  *     responses:
  *       201:
- *         description: Asociado
+ *         description: Asociación creada
+ *       409:
+ *         description: Ya existe esa asociación
  */
-router.post('/:id/obras-sociales', verificarToken, autorizar(3),
-    body('id_obra_social').isInt(),
-    validate,
+router.post(
+    '/:id/obras-sociales',
+    verifyToken,
+    checkRole([3]), // solo admin
+    param('id').isInt({ min: 1 }).withMessage('El ID debe ser un entero positivo'),
+    body('id_obra_social').isInt({ min: 1 }).withMessage('id_obra_social debe ser un entero positivo'),
+    validarCampos,
     asociarObraSocial
 );
 
@@ -94,7 +118,7 @@ router.post('/:id/obras-sociales', verificarToken, autorizar(3),
  * @swagger
  * /medicos/{id}/obras-sociales/{idOS}:
  *   delete:
- *     summary: Desasociar obra social de médico
+ *     summary: Desasociar un médico de una obra social (solo admin)
  *     tags: [Médicos]
  *     security:
  *       - bearerAuth: []
@@ -111,8 +135,18 @@ router.post('/:id/obras-sociales', verificarToken, autorizar(3),
  *           type: integer
  *     responses:
  *       200:
- *         description: Desasociado
+ *         description: Desasociado correctamente
+ *       404:
+ *         description: Asociación no encontrada
  */
-router.delete('/:id/obras-sociales/:idOS', verificarToken, autorizar(3), desasociarObraSocial);
+router.delete(
+    '/:id/obras-sociales/:idOS',
+    verifyToken,
+    checkRole([3]),
+    param('id').isInt({ min: 1 }).withMessage('El ID debe ser un entero positivo'),
+    param('idOS').isInt({ min: 1 }).withMessage('El ID de obra social debe ser un entero positivo'),
+    validarCampos,
+    desasociarObraSocial
+);
 
 export default router;
