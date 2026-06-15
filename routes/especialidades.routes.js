@@ -1,51 +1,129 @@
-// iniciando CRUD
-
-import { Router } from "express";
-import { body, param } from "express-validator";
-import { validarCampos } from "../middlewares/validate.js";
-
+import { Router } from 'express';
+import { body, validationResult } from 'express-validator';
+import { verifyToken, checkRole } from '../middlewares/auth.js';
+import { autorizar } from '../middlewares/roles.js';
 import {
-  getEspecialidades,
-  getEspecialidadById,
-  createEspecialidad,
-  updateEspecialidad,
-  deleteEspecialidad
-} from "../controllers/especialidades.controller.js";  //agregando el controlador
+    getEspecialidades,
+    getEspecialidadById,
+    createEspecialidad,
+    updateEspecialidad,
+    deleteEspecialidad
+} from '../controllers/especialidades.controller.js';
+
+const validate = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errores: errors.array() });
+    next();
+};
 
 const router = Router();
 
-// GET todos
-router.get("/", getEspecialidades);
+/**
+ * @swagger
+ * /especialidades:
+ *   get:
+ *     summary: Listar especialidades
+ *     tags: [Especialidades]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de especialidades
+ */
+router.get('/', verifyToken, checkRole([2, 3]), getEspecialidades);
 
-// GET por ID
-router.get(
-  "/:id",
-  param("id").isInt().withMessage("El ID debe ser numérico"),
-  getEspecialidadById
-);
+/**
+ * @swagger
+ * /especialidades/{id}:
+ *   get:
+ *     summary: Obtener especialidad por ID
+ *     tags: [Especialidades]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Especialidad
+ *       404:
+ *         description: No encontrada
+ */
+router.get('/:id', verifyToken, checkRole([2, 3]), getEspecialidadById);
 
-// POST crear
-router.post(
-  "/",
-  body("nombre")
-    .notEmpty().withMessage("El nombre es obligatorio")
-    .isLength({ min: 3 }).withMessage("Mínimo 3 caracteres"),
-  createEspecialidad
-);
+/**
+ * @swagger
+ * /especialidades:
+ *   post:
+ *     summary: Crear especialidad
+ *     tags: [Especialidades]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Creada
+ */
+router.post('/', verifyToken, checkRole([3]), body('nombre').notEmpty(), validate, createEspecialidad);
 
-// PUT editar
-router.put(
-  "/:id",
-  param("id").isInt(),
-  body("nombre").notEmpty(),
-  updateEspecialidad
-);
+/**
+ * @swagger
+ * /especialidades/{id}:
+ *   put:
+ *     summary: Editar especialidad
+ *     tags: [Especialidades]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Actualizada
+ */
+router.put('/:id', verifyToken, checkRole([3]), body('nombre').notEmpty(), validate, updateEspecialidad);
 
-// DELETE lógico
-router.delete(
-  "/:id",
-  param("id").isInt(),
-  deleteEspecialidad
-);
+/**
+ * @swagger
+ * /especialidades/{id}:
+ *   delete:
+ *     summary: Eliminar especialidad (soft delete)
+ *     tags: [Especialidades]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Eliminada
+ */
+router.delete('/:id', verifyToken, checkRole([3]), deleteEspecialidad);
 
 export default router;
