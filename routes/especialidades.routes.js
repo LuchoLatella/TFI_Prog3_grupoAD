@@ -30,7 +30,7 @@ const router = Router();
  *       200:
  *         description: Lista de especialidades
  */
-router.get('/', verifyToken, checkRole(2, 3), getEspecialidades);
+router.get('/', verifyToken, checkRole([2, 3]), getEspecialidades);
 
 /**
  * @swagger
@@ -52,7 +52,7 @@ router.get('/', verifyToken, checkRole(2, 3), getEspecialidades);
  *       404:
  *         description: No encontrada
  */
-router.get('/:id', verifyToken, checkRole(2, 3), getEspecialidadById);
+router.get('/:id', verifyToken, checkRole([2, 3]), getEspecialidadById);
 
 /**
  * @swagger
@@ -75,7 +75,7 @@ router.get('/:id', verifyToken, checkRole(2, 3), getEspecialidadById);
  *       201:
  *         description: Creada
  */
-router.post('/', verifyToken, checkRole(3), body('nombre').notEmpty(), validate, createEspecialidad);
+router.post('/', verifyToken, checkRole([3]), body('nombre').notEmpty(), validate, createEspecialidad);
 
 /**
  * @swagger
@@ -104,7 +104,7 @@ router.post('/', verifyToken, checkRole(3), body('nombre').notEmpty(), validate,
  *       200:
  *         description: Actualizada
  */
-router.put('/:id', verifyToken, checkRole(3), body('nombre').notEmpty(), validate, updateEspecialidad);
+router.put('/:id', verifyToken, checkRole([3]), body('nombre').notEmpty(), validate, updateEspecialidad);
 
 /**
  * @swagger
@@ -124,6 +124,6 @@ router.put('/:id', verifyToken, checkRole(3), body('nombre').notEmpty(), validat
  *       200:
  *         description: Eliminada
  */
-router.delete('/:id', verifyToken, checkRole(3), deleteEspecialidad);
+router.delete('/:id', verifyToken, checkRole([3]), deleteEspecialidad);
 
 export default router;
