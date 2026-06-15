@@ -58,7 +58,6 @@ PORT=3000
 CORS_ORIGIN=*
 ```
 
-> ⚠️ No usar `root` como usuario de base de datos.
 
 **5. Iniciar el servidor**
 ```bash
