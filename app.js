@@ -21,8 +21,9 @@ import turnosRoutes from './routes/turnos.routes.js';
 
 const app = express();
 
-app.use(cors({origin: process.env.CORS_ORIGIN || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 }));
 app.use(express.json());
 app.use(morgan('dev'));
@@ -34,8 +35,21 @@ const swaggerSpec = swaggerJsdoc({
         info: {
             title: 'Clínica Médica API',
             version: '1.0.0',
-            description: 'API REST para gestión de clínica médica'
+            description: 'API REST para gestión de clínica médica — grupoAD'
         },
+        // ↓ Esto hace que Swagger use /api/v1 como base para todas las rutas
+        servers: [
+            { url: 'http://localhost:3000/api/v1', description: 'Servidor local' }
+        ],
+        // ↓ Esto define el orden de las secciones en Swagger UI
+        tags: [
+            { name: 'Auth',           description: 'Autenticación — empezar acá' },
+            { name: 'Especialidades', description: 'Gestión de especialidades médicas' },
+            { name: 'Obras Sociales', description: 'Gestión de obras sociales' },
+            { name: 'Médicos',        description: 'Gestión de médicos' },
+            { name: 'Pacientes',      description: 'Gestión de pacientes' },
+            { name: 'Turnos',         description: 'Turnos, estadísticas y PDF' },
+        ],
         components: {
             securitySchemes: {
                 bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
@@ -48,19 +62,22 @@ const swaggerSpec = swaggerJsdoc({
 
 app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/api/v1/auth',          authRoutes);
+app.use('/api/v1/auth',           authRoutes);
 app.use('/api/v1/especialidades', especialidadesRoutes);
 app.use('/api/v1/obras-sociales', obrasSocialesRoutes);
 app.use('/api/v1/medicos',        medicosRoutes);
 app.use('/api/v1/pacientes',      pacientesRoutes);
 app.use('/api/v1/turnos',         turnosRoutes);
 
+// 404
 app.use((req, res) => {
-  res.status(404).json({ mensaje: 'Ruta no encontrada' });
+    res.status(404).json({ mensaje: 'Ruta no encontrada' });
 });
+
+// Error global
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({ mensaje: err.message });
+    console.error(err.stack);
+    res.status(err.status || 500).json({ mensaje: err.message });
 });
 
 const PORT = process.env.PORT || 3000;

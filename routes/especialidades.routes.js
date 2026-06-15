@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { body, validationResult } from 'express-validator';
-import { verificarToken } from '../middlewares/auth.js';
+import { verifyToken, checkRole } from '../middlewares/auth.js';
 import { autorizar } from '../middlewares/roles.js';
 import {
     getEspecialidades,
@@ -30,7 +30,7 @@ const router = Router();
  *       200:
  *         description: Lista de especialidades
  */
-router.get('/', verificarToken, autorizar(2, 3), getEspecialidades);
+router.get('/', verifyToken, checkRole([2, 3]), getEspecialidades);
 
 /**
  * @swagger
@@ -52,7 +52,7 @@ router.get('/', verificarToken, autorizar(2, 3), getEspecialidades);
  *       404:
  *         description: No encontrada
  */
-router.get('/:id', verificarToken, autorizar(2, 3), getEspecialidadById);
+router.get('/:id', verifyToken, checkRole([2, 3]), getEspecialidadById);
 
 /**
  * @swagger
@@ -75,7 +75,7 @@ router.get('/:id', verificarToken, autorizar(2, 3), getEspecialidadById);
  *       201:
  *         description: Creada
  */
-router.post('/', verificarToken, autorizar(3), body('nombre').notEmpty(), validate, createEspecialidad);
+router.post('/', verifyToken, checkRole([3]), body('nombre').notEmpty(), validate, createEspecialidad);
 
 /**
  * @swagger
@@ -104,7 +104,7 @@ router.post('/', verificarToken, autorizar(3), body('nombre').notEmpty(), valida
  *       200:
  *         description: Actualizada
  */
-router.put('/:id', verificarToken, autorizar(3), body('nombre').notEmpty(), validate, updateEspecialidad);
+router.put('/:id', verifyToken, checkRole([3]), body('nombre').notEmpty(), validate, updateEspecialidad);
 
 /**
  * @swagger
@@ -124,6 +124,6 @@ router.put('/:id', verificarToken, autorizar(3), body('nombre').notEmpty(), vali
  *       200:
  *         description: Eliminada
  */
-router.delete('/:id', verificarToken, autorizar(3), deleteEspecialidad);
+router.delete('/:id', verifyToken, checkRole([3]), deleteEspecialidad);
 
 export default router;
