@@ -1,22 +1,15 @@
 import { Router } from 'express';
 import { body, param, query } from 'express-validator';
-import { validarCampos } from '../middlewares/validate.js';
-import { verifyToken, checkRole } from '../middlewares/auth.js';
+import { validarCampos } from '../../middlewares/validate.js';
+import { verifyToken, checkRole } from '../../middlewares/auth.js';
 import {
     getMedicos,
     getMedicoById,
     asociarObraSocial,
     desasociarObraSocial
-} from '../controllers/medicos.controller.js';
+} from '../../controllers/medicos.controller.js';
 
 const router = Router();
-
-/**
- * @swagger
- * tags:
- *   name: Médicos
- *   description: Gestión de médicos y sus obras sociales
- */
 
 /**
  * @swagger
@@ -39,7 +32,7 @@ const router = Router();
 router.get(
     '/',
     verifyToken,
-    checkRole([2, 3]), // pacientes y admins pueden listar médicos
+    checkRole([2, 3]),
     query('especialidad').optional().isInt({ min: 1 }).withMessage('ID especialidad inválido'),
     validarCampos,
     getMedicos
@@ -107,7 +100,7 @@ router.get(
 router.post(
     '/:id/obras-sociales',
     verifyToken,
-    checkRole([3]), // solo admin
+    checkRole([3]),
     param('id').isInt({ min: 1 }).withMessage('El ID debe ser un entero positivo'),
     body('id_obra_social').isInt({ min: 1 }).withMessage('id_obra_social debe ser un entero positivo'),
     validarCampos,
