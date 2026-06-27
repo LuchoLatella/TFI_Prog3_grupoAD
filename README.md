@@ -76,7 +76,10 @@ http://localhost:3000/api/v1/api-docs
 ```
 
 Para autenticarse en Swagger:
+
 1. Hacer `POST /api/v1/auth/login` con las credenciales
+   Pueba "email": "admin@clinica.com",
+         "contrasenia": "admin123"
 2. Copiar el `token` de la respuesta
 3. Clic en el botón **Authorize 🔒** (arriba a la derecha)
 4. Pegar el token y confirmar
