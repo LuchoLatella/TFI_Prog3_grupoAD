@@ -16,8 +16,9 @@ export const crearTurno = async ({ id_medico, id_paciente, id_obra_social, fecha
     try {
         await conn.beginTransaction();
 
+        // Todas las consultas dentro de la transacción reciben conn
         if (rol === 2) {
-            const paciente = await TurnoRepository.findPacienteByUsuario(idUsuario);
+            const paciente = await TurnoRepository.findPacienteByUsuario(conn, idUsuario);
             if (!paciente) {
                 const error = new Error('Paciente no encontrado');
                 error.status = 404;
@@ -27,14 +28,14 @@ export const crearTurno = async ({ id_medico, id_paciente, id_obra_social, fecha
             id_obra_social = id_obra_social ?? paciente.id_obra_social;
         }
 
-        const medico = await TurnoRepository.findMedicoById(id_medico);
+        const medico = await TurnoRepository.findMedicoById(conn, id_medico);
         if (!medico) {
             const error = new Error('Médico no encontrado');
             error.status = 404;
             throw error;
         }
 
-        const obraSocial = await TurnoRepository.findObraSocialById(id_obra_social);
+        const obraSocial = await TurnoRepository.findObraSocialById(conn, id_obra_social);
         if (!obraSocial) {
             const error = new Error('Obra social no encontrada');
             error.status = 404;
@@ -43,6 +44,8 @@ export const crearTurno = async ({ id_medico, id_paciente, id_obra_social, fecha
 
         const { valor_consulta } = medico;
         const { porcentaje_descuento, es_particular } = obraSocial;
+
+        // Regla de negocio del enunciado
         const valor_total = es_particular
             ? valor_consulta
             : valor_consulta - (porcentaje_descuento / 100) * valor_consulta;

@@ -19,8 +19,7 @@ export const findByMedico = async (idUsuario) => {
     const [rows] = await pool.query(`
         SELECT tr.id_turno_reserva, tr.fecha_hora, tr.valor_total, tr.atentido,
                CONCAT(up.apellido, ' ', up.nombres) AS paciente,
-               up.documento,
-               os.nombre AS obra_social
+               up.documento, os.nombre AS obra_social
         FROM turnos_reservas tr
         JOIN pacientes p ON tr.id_paciente = p.id_paciente
         JOIN usuarios up ON p.id_usuario = up.id_usuario
@@ -36,8 +35,7 @@ export const findByPaciente = async (idUsuario) => {
     const [rows] = await pool.query(`
         SELECT tr.id_turno_reserva, tr.fecha_hora, tr.valor_total, tr.atentido,
                CONCAT(um.apellido, ' ', um.nombres) AS medico,
-               e.nombre AS especialidad,
-               os.nombre AS obra_social
+               e.nombre AS especialidad, os.nombre AS obra_social
         FROM turnos_reservas tr
         JOIN medicos m ON tr.id_medico = m.id_medico
         JOIN usuarios um ON m.id_usuario = um.id_usuario
@@ -83,24 +81,26 @@ export const findByIdForPaciente = async (idTurno, idUsuario) => {
     return rows[0] || null;
 };
 
-export const findPacienteByUsuario = async (idUsuario) => {
-    const [rows] = await pool.query(
+// ── Funciones que participan en la transacción — todas reciben conn ──────────
+
+export const findPacienteByUsuario = async (conn, idUsuario) => {
+    const [rows] = await conn.query(
         'SELECT id_paciente, id_obra_social FROM pacientes WHERE id_usuario = ?',
         [idUsuario]
     );
     return rows[0] || null;
 };
 
-export const findMedicoById = async (idMedico) => {
-    const [rows] = await pool.query(
-        'SELECT valor_consulta FROM medicos WHERE id_medico = ?',
+export const findMedicoById = async (conn, idMedico) => {
+    const [rows] = await conn.query(
+        'SELECT valor_consulta FROM medicos WHERE id_medico = ? AND activo = 1',
         [idMedico]
     );
     return rows[0] || null;
 };
 
-export const findObraSocialById = async (idObraSocial) => {
-    const [rows] = await pool.query(
+export const findObraSocialById = async (conn, idObraSocial) => {
+    const [rows] = await conn.query(
         'SELECT porcentaje_descuento, es_particular FROM obras_sociales WHERE id_obra_social = ? AND activo = 1',
         [idObraSocial]
     );
@@ -109,7 +109,7 @@ export const findObraSocialById = async (idObraSocial) => {
 
 export const create = async (conn, { id_medico, id_paciente, id_obra_social, fecha_hora, valor_total }) => {
     const [result] = await conn.query(
-        'INSERT INTO turnos_reservas (id_medico, id_paciente, id_obra_social, fecha_hora, valor_total, atentido) VALUES (?, ?, ?, ?, ?, 0)',
+        'INSERT INTO turnos_reservas (id_medico, id_paciente, id_obra_social, fecha_hora, valor_total, atentido, activo) VALUES (?, ?, ?, ?, ?, 0, 1)',
         [id_medico, id_paciente, id_obra_social, fecha_hora, valor_total]
     );
     return result.insertId;
@@ -117,15 +117,13 @@ export const create = async (conn, { id_medico, id_paciente, id_obra_social, fec
 
 export const marcarAtendido = async (idTurno) => {
     await pool.query(
-        'UPDATE turnos_reservas SET atentido = 1 WHERE id_turno_reserva = ?',
-        [idTurno]
+        'UPDATE turnos_reservas SET atentido = 1 WHERE id_turno_reserva = ?', [idTurno]
     );
 };
 
 export const cancelar = async (idTurno) => {
     await pool.query(
-        'UPDATE turnos_reservas SET activo = 0 WHERE id_turno_reserva = ?',
-        [idTurno]
+        'UPDATE turnos_reservas SET activo = 0 WHERE id_turno_reserva = ?', [idTurno]
     );
 };
 
