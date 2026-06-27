@@ -1,40 +1,28 @@
-import { pool } from '../config/db.js';
+import * as PacienteService from '../services/pacientes.service.js';
 
 export const getPacientes = async (req, res) => {
     try {
-        const [rows] = await pool.query(`
-            SELECT p.id_paciente, u.id_usuario, u.documento, u.apellido, u.nombres, u.email, u.foto_path,
-                   os.id_obra_social, os.nombre AS obra_social
-            FROM pacientes p
-            JOIN usuarios u ON p.id_usuario = u.id_usuario
-            JOIN obras_sociales os ON p.id_obra_social = os.id_obra_social
-            WHERE u.activo = 1
-        `);
-        res.json(rows);
+        const data = await PacienteService.getAll();
+        res.json(data);
     } catch (error) {
-        res.status(500).json({ mensaje: error.message });
+        res.status(error.status || 500).json({ mensaje: error.message });
     }
 };
 
-export const asociarObraSocial = async (req, res) => {
-    const conn = await pool.getConnection();
+export const getPacienteById = async (req, res) => {
     try {
-        const { id_obra_social } = req.body;
-        await conn.beginTransaction();
-        const [result] = await conn.query(
-            'UPDATE pacientes SET id_obra_social = ? WHERE id_paciente = ?',
-            [id_obra_social, req.params.id]
-        );
-        if (!result.affectedRows) {
-            await conn.rollback();
-            return res.status(404).json({ mensaje: 'Paciente no encontrado' });
-        }
-        await conn.commit();
-        res.json({ mensaje: 'Obra social actualizada' });
+        const data = await PacienteService.getById(req.params.id);
+        res.json(data);
     } catch (error) {
-        await conn.rollback();
-        res.status(500).json({ mensaje: error.message });
-    } finally {
-        conn.release();
+        res.status(error.status || 500).json({ mensaje: error.message });
+    }
+};
+
+export const actualizarObraSocial = async (req, res) => {
+    try {
+        const data = await PacienteService.actualizarObraSocial(req.params.id, req.body.id_obra_social);
+        res.json(data);
+    } catch (error) {
+        res.status(error.status || 500).json({ mensaje: error.message });
     }
 };
