@@ -1,13 +1,12 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { validarCampos } from '../middlewares/validate.js';
-import { login, register } from '../controllers/auth.controller.js';
 import multer from 'multer';
 import path from 'path';
- 
+import { validarCampos } from '../../middlewares/validate.js';
+import { login, register } from '../../controllers/auth.controller.js';
+
 const router = Router();
- 
-// Configuración de Multer para foto de perfil
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
     filename: (req, file, cb) => {
@@ -17,7 +16,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
     storage,
-    limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+    limits: { fileSize: 2 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         const allowed = /jpeg|jpg|png|webp/;
         cb(null, allowed.test(path.extname(file.originalname).toLowerCase()));
