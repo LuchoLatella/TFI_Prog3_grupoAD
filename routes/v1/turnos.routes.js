@@ -1,23 +1,17 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
-import { validarCampos } from '../middlewares/validate.js';
-import { verifyToken, checkRole } from '../middlewares/auth.js';
+import { validarCampos } from '../../middlewares/validate.js';
+import { verifyToken, checkRole } from '../../middlewares/auth.js';
 import {
     getTurnos,
     crearTurno,
     marcarAtendido,
+    cancelarTurno,
     getEstadisticas,
     getReportePDF
-} from '../controllers/turnos.controller.js';
+} from '../../controllers/turnos.controller.js';
 
 const router = Router();
-
-/**
- * @swagger
- * tags:
- *   name: Turnos
- *   description: Gestión de turnos y reservas
- */
 
 /**
  * @swagger
@@ -31,12 +25,7 @@ const router = Router();
  *       200:
  *         description: Lista de turnos (médico ve los suyos, paciente los suyos, admin todos)
  */
-router.get(
-    '/',
-    verifyToken,
-    checkRole([1, 2, 3]), // todos los roles
-    getTurnos
-);
+router.get('/', verifyToken, checkRole([1, 2, 3]), getTurnos);
 
 /**
  * @swagger
@@ -75,7 +64,7 @@ router.get(
 router.post(
     '/',
     verifyToken,
-    checkRole([2, 3]), // pacientes y admin pueden crear turnos
+    checkRole([2, 3]),
     body('id_medico').isInt({ min: 1 }).withMessage('id_medico debe ser un entero positivo'),
     body('fecha_hora').isISO8601().withMessage('fecha_hora debe ser una fecha válida (ISO 8601)'),
     body('id_paciente').optional().isInt({ min: 1 }).withMessage('id_paciente debe ser un entero positivo'),
@@ -83,6 +72,39 @@ router.post(
     validarCampos,
     crearTurno
 );
+
+/**
+ * @swagger
+ * /turnos/estadisticas:
+ *   get:
+ *     summary: Obtener estadísticas de atenciones via stored procedure (solo admin)
+ *     tags: [Turnos]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Estadísticas del mes anterior (resumen, por obra social, por especialidad)
+ */
+router.get('/estadisticas', verifyToken, checkRole([3]), getEstadisticas);
+
+/**
+ * @swagger
+ * /turnos/reporte-pdf:
+ *   get:
+ *     summary: Descargar reporte PDF de turnos (solo admin)
+ *     tags: [Turnos]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Archivo PDF con el informe de turnos
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ */
+router.get('/reporte-pdf', verifyToken, checkRole([3]), getReportePDF);
 
 /**
  * @swagger
@@ -107,7 +129,7 @@ router.post(
 router.patch(
     '/:id/atendido',
     verifyToken,
-    checkRole([1]), // solo médicos
+    checkRole([1]),
     param('id').isInt({ min: 1 }).withMessage('El ID debe ser un entero positivo'),
     validarCampos,
     marcarAtendido
@@ -115,45 +137,31 @@ router.patch(
 
 /**
  * @swagger
- * /turnos/estadisticas:
- *   get:
- *     summary: Obtener estadísticas de atenciones via stored procedure (solo admin)
+ * /turnos/{id}:
+ *   delete:
+ *     summary: Cancelar un turno (paciente cancela el propio, admin cancela cualquiera)
  *     tags: [Turnos]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
- *         description: Estadísticas del mes anterior (resumen, por obra social, por especialidad)
+ *         description: Turno cancelado
+ *       404:
+ *         description: Turno no encontrado
  */
-router.get(
-    '/estadisticas',
+router.delete(
+    '/:id',
     verifyToken,
-    checkRole([3]), // solo admin
-    getEstadisticas
-);
-
-/**
- * @swagger
- * /turnos/reporte-pdf:
- *   get:
- *     summary: Descargar reporte PDF de turnos (solo admin)
- *     tags: [Turnos]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Archivo PDF con el informe de turnos
- *         content:
- *           application/pdf:
- *             schema:
- *               type: string
- *               format: binary
- */
-router.get(
-    '/reporte-pdf',
-    verifyToken,
-    checkRole([3]),
-    getReportePDF
+    checkRole([2, 3]),
+    param('id').isInt({ min: 1 }).withMessage('El ID debe ser un entero positivo'),
+    validarCampos,
+    cancelarTurno
 );
 
 export default router;

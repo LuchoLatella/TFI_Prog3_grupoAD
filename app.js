@@ -5,19 +5,13 @@ import morgan from 'morgan';
 import { mkdirSync } from 'fs';
 import { createRequire } from 'module';
 import swaggerJsdoc from 'swagger-jsdoc';
+import v1Router from './routes/v1/index.js';
 
-dotenv.config();
+dotenv.config({ override: true });
 mkdirSync('uploads', { recursive: true });
 
 const require = createRequire(import.meta.url);
 const swaggerUi = require('swagger-ui-express');
-
-import authRoutes from './routes/auth.routes.js';
-import especialidadesRoutes from './routes/especialidades.routes.js';
-import obrasSocialesRoutes from './routes/obras_sociales.routes.js';
-import medicosRoutes from './routes/medicos.routes.js';
-import pacientesRoutes from './routes/pacientes.routes.js';
-import turnosRoutes from './routes/turnos.routes.js';
 
 const app = express();
 
@@ -37,11 +31,9 @@ const swaggerSpec = swaggerJsdoc({
             version: '1.0.0',
             description: 'API REST para gestión de clínica médica — grupoAD'
         },
-        // ↓ Esto hace que Swagger use /api/v1 como base para todas las rutas
         servers: [
             { url: 'http://localhost:3000/api/v1', description: 'Servidor local' }
         ],
-        // ↓ Esto define el orden de las secciones en Swagger UI
         tags: [
             { name: 'Auth',           description: 'Autenticación — empezar acá' },
             { name: 'Especialidades', description: 'Gestión de especialidades médicas' },
@@ -57,24 +49,16 @@ const swaggerSpec = swaggerJsdoc({
         },
         security: [{ bearerAuth: [] }]
     },
-    apis: ['./routes/*.js']
+    apis: ['./routes/v1/*.js']
 });
 
 app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/v1', v1Router);
 
-app.use('/api/v1/auth',           authRoutes);
-app.use('/api/v1/especialidades', especialidadesRoutes);
-app.use('/api/v1/obras-sociales', obrasSocialesRoutes);
-app.use('/api/v1/medicos',        medicosRoutes);
-app.use('/api/v1/pacientes',      pacientesRoutes);
-app.use('/api/v1/turnos',         turnosRoutes);
-
-// 404
 app.use((req, res) => {
     res.status(404).json({ mensaje: 'Ruta no encontrada' });
 });
 
-// Error global
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(err.status || 500).json({ mensaje: err.message });

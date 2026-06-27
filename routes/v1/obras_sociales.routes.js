@@ -1,23 +1,16 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
-import { validarCampos } from '../middlewares/validate.js';
-import { verifyToken, checkRole } from '../middlewares/auth.js';
+import { validarCampos } from '../../middlewares/validate.js';
+import { verifyToken, checkRole } from '../../middlewares/auth.js';
 import {
     getObrasSociales,
     getObraSocialById,
     createObraSocial,
     updateObraSocial,
     deleteObraSocial
-} from '../controllers/obras_sociales.controller.js';
+} from '../../controllers/obras_sociales.controller.js';
 
 const router = Router();
-
-/**
- * @swagger
- * tags:
- *   name: Obras Sociales
- *   description: Gestión de obras sociales
- */
 
 /**
  * @swagger

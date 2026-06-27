@@ -30,7 +30,7 @@ export const insertUsuario = async (conn, { documento, apellido, nombres, email,
 // Insertar médico asociado al usuario (dentro de una transacción)
 export const insertMedico = async (conn, { id_usuario, matricula, id_especialidad, descripcion, valor_consulta }) => {
     await conn.query(
-        'INSERT INTO medicos (id_usuario, id_especialidad, matricula, descripcion, valor_consulta, activo) VALUES (?, ?, ?, ?, ?, 1)',
+        'INSERT INTO medicos (id_usuario, id_especialidad, matricula, descripcion, valor_consulta) VALUES (?, ?, ?, ?, ?)',
         [id_usuario, id_especialidad, matricula, descripcion, valor_consulta]
     );
 };
